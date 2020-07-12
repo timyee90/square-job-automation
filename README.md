@@ -57,3 +57,7 @@ fileLocation - absolute file path for resume
 ```sh
 node apply.js
 ```
+
+## Notes
+
+1. make sure to customize the code for your own application
