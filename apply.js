@@ -25,7 +25,7 @@ const {
   });
   let page = await browser.newPage();
 
-  await page.setDefaultTimeout(10000);
+  await page.setDefaultTimeout(15000);
 
   // --- find relevant job posts ---
 
@@ -102,7 +102,20 @@ const {
 
     // --- next page ---
 
-    try {
+    await page.waitForSelector(
+      'body > div.topbar.flex.flex-row.flex-jc-center > div > div > div.topbar-job-details > p.margin-vertical--s.flex.flex-ai-center',
+      waitOptions
+    );
+
+    const jobLocation = await page.evaluate(() => {
+      const loc = document.querySelector(
+        'body > div.topbar.flex.flex-row.flex-jc-center > div > div > div.topbar-job-details > p.margin-vertical--s.flex.flex-ai-center'
+      ).innerText;
+      return loc;
+    });
+    console.log(`applying to location: `, jobLocation);
+
+    if (jobLocation.match(/united states/gi)) {
       await page.waitForSelector(
         '#questions-form > sr-base-select-question > sr-select-question > div > select > option:nth-child(2)',
         waitOptions
@@ -111,23 +124,52 @@ const {
         '#questions-form > sr-checkbox-question > div > label > span',
         waitOptions
       );
-    } catch {
-      await page.close();
-      continue;
+
+      await page.select(
+        '#questions-form > sr-base-select-question > sr-select-question > div > select',
+        '669f55a3-07d2-4ed9-a6e9-2b2ae3a93f2b'
+      );
+
+      await page.click(
+        '#questions-form > sr-radio-question:nth-child(4) > fieldset > label:nth-child(2) > span'
+      );
+
+      await page.click(
+        '#questions-form > sr-radio-question:nth-child(5) > fieldset > label:nth-child(3) > span'
+      );
+
+      await page.click(
+        '#questions-form > sr-checkbox-question > div > label > span'
+      );
+
+      await page.select(
+        '#questions-form > sr-eeo-question > div > div > select:nth-child(1)',
+        gender
+      );
+
+      await page.select(
+        '#questions-form > sr-eeo-question > div > div > select.element.element--select.margin--left--m',
+        ethnicity
+      );
+    } else {
+      await page.waitForSelector(
+        '#questions-form > sr-base-select-question > sr-select-question > div > select',
+        waitOptions
+      );
+
+      await page.select(
+        '#questions-form > sr-base-select-question > sr-select-question > div > select',
+        '669f55a3-07d2-4ed9-a6e9-2b2ae3a93f2b'
+      );
+
+      await page.click(
+        '#questions-form > sr-radio-question:nth-child(4) > fieldset > label:nth-child(3) > span'
+      );
+
+      await page.click(
+        '#questions-form > sr-radio-question:nth-child(5) > fieldset > label:nth-child(2) > span'
+      );
     }
-
-    await page.select(
-      '#questions-form > sr-base-select-question > sr-select-question > div > select',
-      '669f55a3-07d2-4ed9-a6e9-2b2ae3a93f2b'
-    );
-
-    await page.click(
-      '#questions-form > sr-radio-question:nth-child(4) > fieldset > label:nth-child(2) > span'
-    );
-
-    await page.click(
-      '#questions-form > sr-radio-question:nth-child(5) > fieldset > label:nth-child(3) > span'
-    );
 
     await page.click(
       '#questions-form > sr-radio-question:nth-child(6) > fieldset > label:nth-child(3) > span'
@@ -137,24 +179,12 @@ const {
       '#questions-form > sr-radio-question:nth-child(8) > fieldset > label:nth-child(3) > span'
     );
 
-    const esign = await page.$x(
-      '/html/body/oc-app-root/main/div/div/oc-form-root/oc-screening-questions/div/oc-screening-questions-form/div/sr-questions-form/form/sr-textarea-question[2]/div/textarea'
-    );
-    await esign[0].type(`${firstName} ${initial} ${lastName}`);
-
-    await page.click(
-      '#questions-form > sr-checkbox-question > div > label > span'
-    );
-
-    await page.select(
-      '#questions-form > sr-eeo-question > div > div > select:nth-child(1)',
-      gender
-    );
-
-    await page.select(
-      '#questions-form > sr-eeo-question > div > div > select.element.element--select.margin--left--m',
-      ethnicity
-    );
+    try {
+      const esign = await page.$x(
+        '/html/body/oc-app-root/main/div/div/oc-form-root/oc-screening-questions/div/oc-screening-questions-form/div/sr-questions-form/form/sr-textarea-question[2]/div/textarea'
+      );
+      await esign[0].type(`${firstName} ${initial} ${lastName}`);
+    } catch {}
 
     await page.click(
       'body > oc-app-root > main > div > div > oc-form-root > oc-screening-questions > div > oc-consent > div > div > div > label'
