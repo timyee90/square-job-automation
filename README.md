@@ -1,6 +1,6 @@
 # Getting Started
 
-1. clone the Repository
+1. clone the repository
 
 2. install node modules
 
@@ -10,11 +10,13 @@ npm install
 
 3. create the following files:
 
+#### applied.txt
+
 ```sh
 touch applied.txt && echo "[]" >> applied.txt
 ```
 
-secret.js
+#### secret.js
 
 ```node
 module.exports = {
@@ -32,7 +34,25 @@ module.exports = {
 };
 ```
 
-4. run apply.js to apply to jobs at Square without lifting a finger
+fileLocation - absolute file path for resume
+
+| string | gender |
+| ------ | ------ |
+| "0"    | Male   |
+| "1"    | Female |
+
+| string | ethnicity                                 |
+| ------ | ----------------------------------------- |
+| "0"    | Black or African American                 |
+| "1"    | American Indian or Alaska Native          |
+| "2"    | Asian                                     |
+| "3"    | Hispanic or Latino                        |
+| "4"    | White                                     |
+| "5"    | Two or More Races                         |
+| "6"    | Prefer not to answer                      |
+| "7"    | Native Hawaiian or Other Pacific Islander |
+
+4. apply to jobs at Square without lifting a finger
 
 ```sh
 node apply.js
