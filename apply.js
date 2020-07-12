@@ -11,6 +11,7 @@ const {
   linkedin,
   website,
   message,
+  fileLocation,
 } = require('./secrets.js');
 
 (async () => {
@@ -20,7 +21,7 @@ const {
     args: ['--window-size=2000,800'],
     defaultViewport: null,
   });
-  const page = await browser.newPage();
+  let page = await browser.newPage();
 
   await page.setDefaultTimeout(10000);
 
@@ -54,6 +55,8 @@ const {
     return jobs;
   });
 
+  await page.close();
+
   // --- apply to relevant jobs ---
 
   for (const url of jobs) {
@@ -64,6 +67,9 @@ const {
     if (applied.indexOf(url) > -1) continue;
 
     // --- first page ---
+
+    page = await browser.newPage();
+    await page.setDefaultTimeout(10000);
 
     await page.goto(url, waitOptions);
 
@@ -86,9 +92,7 @@ const {
       ),
     ]);
 
-    await fileChooser.accept([
-      '/users/timyee/Dropbox/Resume_Cover Letter/#SoftwareEngineering/Timothy Yee 7.08.2020.pdf',
-    ]);
+    await fileChooser.accept([fileLocation]);
 
     await page.click(
       'body > oc-app-root > main > div > div > oc-form-root > oc-oneclick-form > oc-nav-first-page > footer > div > div:nth-child(2) > button'
@@ -96,10 +100,19 @@ const {
 
     // --- next page ---
 
-    await page.waitForSelector(
-      '#questions-form > sr-base-select-question > sr-select-question > div > select > option:nth-child(2)',
-      waitOptions
-    );
+    try {
+      await page.waitForSelector(
+        '#questions-form > sr-base-select-question > sr-select-question > div > select > option:nth-child(2)',
+        waitOptions
+      );
+      await page.waitForSelector(
+        '#questions-form > sr-checkbox-question > div > label > span',
+        waitOptions
+      );
+    } catch {
+      await page.close();
+      continue;
+    }
 
     await page.select(
       '#questions-form > sr-base-select-question > sr-select-question > div > select',
@@ -150,11 +163,13 @@ const {
       'body > oc-app-root > main > div > div > oc-form-root > oc-screening-questions > oc-nav-screening-questions > footer > div > div:nth-child(2) > button'
     );
 
-    await sleep(3000);
-
     // --- add url to applied.txt ---
     applied.push(url);
     await fs.writeFileAsync('./applied.txt', JSON.stringify(applied), 'utf-8');
+
+    await sleep(5000);
+
+    await page.close();
   }
 
   browser.close();
