@@ -26,6 +26,9 @@ module.exports = {
   linkedin: 'FILL_ME_IN',
   website: 'FILL_ME_IN',
   message: 'FILL_ME_IN',
+  fileLocation: 'FILL_ME_IN',
+  gender: 'FILL_ME_IN',
+  ethnicity: 'FILL_ME_IN',
 };
 ```
 

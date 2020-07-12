@@ -12,6 +12,8 @@ const {
   website,
   message,
   fileLocation,
+  gender,
+  ethnicity,
 } = require('./secrets.js');
 
 (async () => {
@@ -146,12 +148,12 @@ const {
 
     await page.select(
       '#questions-form > sr-eeo-question > div > div > select:nth-child(1)',
-      '0'
+      gender
     );
 
     await page.select(
       '#questions-form > sr-eeo-question > div > div > select.element.element--select.margin--left--m',
-      '2'
+      ethnicity
     );
 
     await page.click(
