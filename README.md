@@ -16,7 +16,7 @@ npm install
 touch applied.txt && echo "[]" >> applied.txt
 ```
 
-#### secret.js
+#### secrets.js
 
 ```node
 module.exports = {
