@@ -96,6 +96,8 @@ const {
 
     await fileChooser.accept([fileLocation]);
 
+    await sleep(5000);
+
     await page.click(
       'body > oc-app-root > main > div > div > oc-form-root > oc-oneclick-form > oc-nav-first-page > footer > div > div:nth-child(2) > button'
     );
@@ -115,7 +117,7 @@ const {
     });
     console.log(`applying to location: `, jobLocation);
 
-    if (jobLocation.match(/united states/gi)) {
+    try {
       await page.waitForSelector(
         '#questions-form > sr-base-select-question > sr-select-question > div > select > option:nth-child(2)',
         waitOptions
@@ -151,7 +153,7 @@ const {
         '#questions-form > sr-eeo-question > div > div > select.element.element--select.margin--left--m',
         ethnicity
       );
-    } else {
+    } catch {
       await page.waitForSelector(
         '#questions-form > sr-base-select-question > sr-select-question > div > select',
         waitOptions
